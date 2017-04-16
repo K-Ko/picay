@@ -22,4 +22,6 @@ Test
 
 Add to crontab
 
+    crontab -e
+
     * * * * * ~/picay/picay.sh >/dev/null 2>&1

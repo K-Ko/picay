@@ -1,0 +1,18 @@
+###
+###
+###
+
+###
+### MQTT Username
+###
+USERNAME = ""
+
+###
+### MQTT Password
+###
+PASSWORD = ""
+
+###
+### Client ID
+###
+CLIENTID = ""

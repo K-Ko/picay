@@ -25,3 +25,9 @@ Add to crontab
     crontab -e
 
     * * * * * ~/picay/picay.sh >/dev/null 2>&1
+
+## Extend
+
+Copy `metrics/.template.sh` to an own script and write your code.
+
+See example for CPU frequency in the template file.

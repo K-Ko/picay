@@ -1,6 +1,10 @@
 #!/bin/sh
 ###
+### Simple Raspberry to Cayenne MQTT client
 ###
+### @author     Knut Kohl <github@knutkohl.de>
+### @copyright  (c) 2016 Knut Kohl
+### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
 
 #set -x

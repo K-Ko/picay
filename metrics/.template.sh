@@ -12,6 +12,8 @@
 ### Example to get current CPU frequency
 ###
 ### Just return your metrics in format
-### <channel>,<value>[,type,unit]
+### <value>[,type,unit]
 ###
-#awk '{printf "freq,%d", $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+### Channel name is build from file name: frequency.sh => frequency
+###
+#awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq

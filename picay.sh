@@ -16,7 +16,8 @@ data=
 
 ### Read defined metrics and build data to send
 for file in ${0%/*}/metrics/*.sh; do
-    data="$data $(. $file)"
+    channel=$(basename $file | sed 's/\.sh//g')
+    data="$data $channel,$(. $file)"
 done
 
 ### Send all to Cayenne

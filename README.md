@@ -24,7 +24,17 @@ Add to crontab
 
     crontab -e
 
-    * * * * * ~/picay/picay.sh >/dev/null 2>&1
+    *    *    *    *    *    ~/picay/picay.sh >/dev/null 2>&1
+
+## Selective send
+
+Send all **except** disk usage and temperature
+
+    *    *    *    *    *    ~/picay/picay.sh -disk,temperature >/dev/null 2>&1
+
+Send **only** disk usage and temperature
+
+    */5  *    *    *    *    ~/picay/picay.sh disk,temperature >/dev/null 2>&1
 
 ## Extend
 

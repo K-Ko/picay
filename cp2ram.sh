@@ -10,8 +10,15 @@ rsync -a "$pwd" "$1" --exclude .git --exclude docs
 
 echo
 echo "Put this to your crontab:"
-echo "    @reboot $pwd/$(basename $0) $1"
 echo
-echo "Run picay in crontab with this:"
-echo "    * * * * * sh $1/picay/picay.sh >/dev/null"
+echo "@reboot $pwd/$(basename $0) $1 >/dev/null"
+echo
+echo "# Send all metrics"
+echo "*    *  *  *  *  bash $1/picay/picay.sh >/dev/null"
+echo
+echo "# Send all except disk usage and temperature"
+echo "#*    *  *  *  *  bash $1/picay/picay.sh -disk,temperature >/dev/null"
+echo
+echo "# Send only disk usage and temperature"
+echo "#*/5  *  *  *  *  bash $1/picay/picay.sh disk,temperature >/dev/null"
 echo

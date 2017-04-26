@@ -14,11 +14,21 @@ Simple Raspberry to Cayenne MQTT client
     cd picay
     cp config.dist config.py
 
-Edit `config.py` and set your username, password and client id
+## Add Device on Cayenne
 
-Test
+Go to your [Dashboard](https://cayenne.mydevices.com/cayenne/dashboard) and **Add new ...** > **Device/Widget**
+
+Use **CAYENNE API** > **Bring Your Own Thing**
+
+Edit now your `config.py` and set your **username**, **password** and **client id**
+
+> Note: The username and password is unique for your account, the client id is different for each device.
+
+## Test
 
     ./picay.sh
+
+Now you should see on Cayenne the connected device.
 
 Add to crontab
 
@@ -28,11 +38,11 @@ Add to crontab
 
 ## Selective send
 
-Send all **except** disk usage and temperature
+Send all **except** disk usage and temperature (comma separated channel list starting with `-`)
 
     *    *    *    *    *    ~/picay/picay.sh -disk,temperature >/dev/null 2>&1
 
-Send **only** disk usage and temperature
+Send **only** disk usage and temperature (comma separated channel list)
 
     */5  *    *    *    *    ~/picay/picay.sh disk,temperature >/dev/null 2>&1
 

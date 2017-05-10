@@ -21,6 +21,7 @@ args = parser.parse_args()
 def on_message(message):
     if message.msg_id == "done":
         ### The "done" message IS the last message
+        client.disconnect()
         sys.exit(0)
 
 ### Start up

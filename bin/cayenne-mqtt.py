@@ -6,7 +6,7 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-import sys, os, argparse, time
+import sys, os, argparse
 import cayenne.client
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -21,7 +21,6 @@ args = parser.parse_args()
 def on_message(message):
     if message.msg_id == "done":
         ### The "done" message IS the last message
-        client.disconnect()
         sys.exit(0)
 
 ### Start up
@@ -34,9 +33,6 @@ try:
     client = cayenne.client.CayenneMQTTClient()
     client.on_message = on_message
     client.begin(config.USERNAME, config.PASSWORD, config.CLIENTID)
-
-    ### Remember start time to check run time
-    start = time.time()
 
     ### Wait until connected, required to send message in order
     while not client.connected: client.loop()
@@ -61,8 +57,8 @@ try:
     ### All done, send flag messge
     client.mqttPublish(client.rootTopic + "/cmd/1", "done,1")
 
-    ### Process messages ...
-    client.loop_forever()
+    ### Process messages but not longer than 5 seconds ...
+    client.client.loop_forever(timeout=5)
 
 except Exception, e:
     print "Failed, " + str(e)

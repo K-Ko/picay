@@ -18,12 +18,21 @@ if [ "$1" ]; then
     [ "${1:0:1}" != - ] && include="$1," || exclude="${1:1},"
 fi
 
+pid="/tmp/picay.$(echo $@ | md5sum | cut -b-8).pid"
+
+if ln -s "pid=$$" $pid 2>/dev/null; then
+    trap "rm $pid" 0 1 2 3 15
+else
+    echo "Lock file $pid exists, exit"
+    exit
+fi
+
 data=
 
 ### Read defined metrics and build data to send
 for file in ${0%/*}/metrics/*.sh; do
+    [ -f $(dirname $file)/.disabled ] && continue
     channel=$(basename $file | sed 's/\.sh//g')
-
     if [ "$include" ]; then
         echo $include | grep -q "$channel,"
         [ $? -eq 0 ] || continue

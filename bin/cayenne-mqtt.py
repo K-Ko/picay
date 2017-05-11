@@ -20,7 +20,7 @@ args = parser.parse_args()
 ### The callback for when a message is received from Cayenne.
 def on_message(message):
     if message.msg_id == "done":
-        ### The "done" message IS the last message
+        ### The "done" message IS the last message, exit
         sys.exit(0)
 
 ### Start up
@@ -37,7 +37,10 @@ try:
     ### Wait until connected, required to send message in order
     while not client.connected: client.loop()
 
-    ### Sned all data tuples
+    ### Remember start time to check run time
+    start = time.time()
+
+    ### Send all data tuples
     for arg in args.data:
         v = arg.split(",")
 
@@ -57,8 +60,11 @@ try:
     ### All done, send flag messge
     client.mqttPublish(client.rootTopic + "/cmd/1", "done,1")
 
-    ### Process messages but not longer than 5 seconds ...
-    client.client.loop_forever(timeout=5)
+    ### Wait until done but max. 10 seconds
+    while True:
+        client.loop()
+        if (time.time() - start >= 10):		
+            raise Exception("timed out")
 
 except Exception, e:
     print "Failed, " + str(e)

@@ -6,7 +6,7 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-import sys, os, argparse
+import sys, os, argparse, time
 import cayenne.client
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -34,11 +34,14 @@ try:
     client.on_message = on_message
     client.begin(config.USERNAME, config.PASSWORD, config.CLIENTID)
 
-    ### Wait until connected, required to send message in order
-    while not client.connected: client.loop()
-
     ### Remember start time to check run time
     start = time.time()
+
+    ### Wait until connected, required to send message in order
+    while not client.connected:
+        client.loop()
+        if time.time() - start >= 10:		
+            raise Exception("get connection timed out")
 
     ### Send all data tuples
     for arg in args.data:
@@ -60,11 +63,14 @@ try:
     ### All done, send flag messge
     client.mqttPublish(client.rootTopic + "/cmd/1", "done,1")
 
+    ### Remember start time to check run time
+    start = time.time()
+
     ### Wait until done but max. 10 seconds
     while True:
         client.loop()
-        if (time.time() - start >= 10):		
-            raise Exception("timed out")
+        if time.time() - start >= 10:		
+            raise Exception("send data timed out")
 
 except Exception, e:
     print "Failed, " + str(e)

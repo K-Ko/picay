@@ -45,14 +45,15 @@ try:
     client.on_message = on_message
     client.begin(args.username, args.password, args.clientid)
 
-    ### Remember start time to check run time
-    start = time.time()
+    tries = 10
 
     ### Wait until connected, required to send message in order
     while not client.connected:
         client.loop()
-        if time.time() - start >= 10:		
-            raise Exception("get connection timed out")
+        time.sleep(1)
+        tries = tries - 1
+        if tries <= 0:
+            raise Exception("connection timed out")
 
     ### Send all data tuples
     for arg in args.data:

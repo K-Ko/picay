@@ -9,14 +9,14 @@
 ###
 ### MQTT Username
 ###
-USERNAME = ""
+USERNAME=""
 
 ###
 ### MQTT Password
 ###
-PASSWORD = ""
+PASSWORD=""
 
 ###
 ### Client ID
 ###
-CLIENTID = ""
+CLIENTID=""

@@ -12,7 +12,7 @@ Simple Raspberry to Cayenne MQTT client
     cd
     git clone https://github.com/K-Ko/picay.git
     cd picay
-    cp config.dist config.py
+    cp picay.conf.dist picay.conf
 
 ## Add Device on Cayenne
 
@@ -34,20 +34,22 @@ Add to crontab
 
     crontab -e
 
-    *    *    *    *    *    ~/picay/picay.sh >/dev/null 2>&1
+    *    *    *    *    *    ~/picay/picay.sh &>/dev/null
 
 ## Selective send
 
 Send all **except** disk usage and temperature (comma separated channel list starting with `-`)
 
-    *    *    *    *    *    ~/picay/picay.sh -disk,temperature >/dev/null 2>&1
+    *    *    *    *    *    ~/picay/picay.sh -disk,temperature &>/dev/null
 
 Send **only** disk usage and temperature (comma separated channel list)
 
-    */5  *    *    *    *    ~/picay/picay.sh disk,temperature >/dev/null 2>&1
+    */5  *    *    *    *    ~/picay/picay.sh disk,temperature &>/dev/null
 
 ## Extend
 
 Copy `metrics/.template.sh` to an own script and write your code.
 
 See example for CPU frequency in the template file.
+
+To disable a metrics create a file `metrics/<metrics>.disabled`.

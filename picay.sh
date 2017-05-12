@@ -31,8 +31,8 @@ data=
 
 ### Read defined metrics and build data to send
 for file in ${0%/*}/metrics/*.sh; do
-    [ -f $(dirname $file)/.disabled ] && continue
     channel=$(basename $file | sed 's/\.sh//g')
+    [ -f $(dirname $file)/$channel.disabled ] && continue
     if [ "$include" ]; then
         echo $include | grep -q "$channel,"
         [ $? -eq 0 ] || continue
@@ -47,5 +47,7 @@ done
 echo $data
 echo
 
+. ${0%/*}/picay.conf
+
 ### Send all to Cayenne
-$PYTHON ${0%/*}/bin/cayenne-mqtt.py $data
+$PYTHON ${0%/*}/bin/cayenne-mqtt.py -u $USERNAME -p $PASSWORD -c $CLIENTID $data

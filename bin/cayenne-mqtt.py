@@ -9,18 +9,29 @@
 import sys, os, argparse, time
 import cayenne.client
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-import config
-
 ### Init command line arguments parser
 parser = argparse.ArgumentParser(description="Cayenne MQTT client")
-parser.add_argument("data", metavar="<channel>,<value>[,type,unit]", type=str, nargs="+", help="Data")
+parser.add_argument(
+    "data", metavar="<channel>,<value>[,type,unit]", type=str, nargs="+",
+    help="Data to send"
+)
+parser.add_argument(
+    '-u', dest="username", required=True, help="Cayenne username"
+)
+parser.add_argument(
+    '-p', dest="password", required=True, help="Cayenne password"
+)
+parser.add_argument(
+    '-c', dest="clientid", required=True, help="Cayenne client id"
+)
+
 args = parser.parse_args()
 
 ### The callback for when a message is received from Cayenne.
 def on_message(message):
     if message.msg_id == "done":
         ### The "done" message IS the last message, exit
+        print("\nAll done")
         sys.exit(0)
 
 ### Start up
@@ -32,7 +43,7 @@ try:
     ### Init Cayenne client
     client = cayenne.client.CayenneMQTTClient()
     client.on_message = on_message
-    client.begin(config.USERNAME, config.PASSWORD, config.CLIENTID)
+    client.begin(args.username, args.password, args.clientid)
 
     ### Remember start time to check run time
     start = time.time()

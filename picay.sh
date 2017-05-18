@@ -12,6 +12,10 @@
 ### Check for predefinded python to use
 : ${PYTHON:=$(which python)}
 
+conf=${0%/*}/picay.conf
+
+[ ! -s $conf ] && echo "Missing configuration file $conf" && exit
+
 if [ "$1" ]; then
     ### If there is a parameter starting with '-',
     ### exclude channels otherwise only send defined channels
@@ -27,7 +31,19 @@ else
     exit
 fi
 
-data=
+BBlue='\033[1;34m'
+BRed='\033[1;31m'
+BGreen='\033[1;32m'
+ColorOff='\033[0m'
+
+### Defaults
+HOST=mqtt.mydevices.com
+PORT=1883
+VERBOSE=
+
+. $conf
+
+[ "$VERBOSE" ] && d=-d
 
 ### Read defined metrics and build data to send
 for file in ${0%/*}/metrics/*.sh; do
@@ -41,13 +57,21 @@ for file in ${0%/*}/metrics/*.sh; do
         [ $? -eq 0 ] && continue
     fi
 
-    data="$data $channel,$(. $file)"
+    topic=v1/$USERNAME/things/$CLIENTID/data/$channel
+    data="$(. $file)"
+
+    printf "${BBlue}%s/%s${ColorOff}\n%s ..." $topic $channel $data
+    [ "$d" ] && printf "\n"
+
+    mosquitto_pub $d -i $CLIENTID -h $HOST -p $PORT -u $USERNAME -P $PASSWORD -t $topic -m "$data" -q 1
+    rc=$?
+
+    [ "$d" ] || s="\x8\x8\x8- "
+
+    if [ $rc -eq 0 ]; then
+        printf "$s${BGreen}ok${ColorOff}\n"
+    else
+        printf "$sERROR ${BRed}%d{ColorOff}\n" $rc
+    fi
+
 done
-
-echo $data
-echo
-
-. ${0%/*}/picay.conf
-
-### Send all to Cayenne
-$PYTHON ${0%/*}/bin/cayenne-mqtt.py -u $USERNAME -p $PASSWORD -c $CLIENTID $data

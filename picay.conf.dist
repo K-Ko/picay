@@ -20,3 +20,8 @@ PASSWORD=""
 ### Client ID
 ###
 CLIENTID=""
+
+###
+### Verbose mode
+###
+#VERBOSE=yes

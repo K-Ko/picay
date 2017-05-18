@@ -1,11 +1,10 @@
 # picay
 Simple Raspberry to Cayenne MQTT client
 
-## Update Python and install Cayenne MQTT lib
+## Install mosquitto clients
 
-    sudo apt-get -y install python-pip python-dev build-essential
-    sudo pip install --upgrade pip virtualenv
-    sudo pip install cayenne-mqtt
+    sudo apt-get update
+    sudo apt-get -y install mosquitto-clients
 
 ## Install & Setup
 
@@ -20,7 +19,7 @@ Go to your [Dashboard](https://cayenne.mydevices.com/cayenne/dashboard) and **Ad
 
 Use **CAYENNE API** > **Bring Your Own Thing**
 
-Edit now your `config.py` and set your **username**, **password** and **client id**
+Edit now your `config.conf` and set your **username**, **password** and **client id**
 
 > Note: The username and password is unique for your account, the client id is different for each device.
 
@@ -38,13 +37,13 @@ Add to crontab
 
 ## Selective send
 
-Send all **except** disk usage and temperature (comma separated channel list starting with `-`)
+Send all **except** disk and memory usage (comma separated channel list starting with `-`)
 
-    *    *    *    *    *    ~/picay/picay.sh -disk,temperature &>/dev/null
+    */5   *    *    *    *    ~/picay/picay.sh -disk,memory &>/dev/null
 
-Send **only** disk usage and temperature (comma separated channel list)
+Send **only** disk and memory usage (comma separated channel list)
 
-    */5  *    *    *    *    ~/picay/picay.sh disk,temperature &>/dev/null
+    */10  *    *    *    *    ~/picay/picay.sh disk,memory &>/dev/null
 
 ## Extend
 

@@ -7,10 +7,10 @@
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
 
-#set -x
+HOST=mqtt.mydevices.com
+PORT=1883
 
-### Check for predefinded python to use
-: ${PYTHON:=$(which python)}
+### --------------------------------------------------------------------------
 
 conf=${0%/*}/picay.conf
 
@@ -25,7 +25,8 @@ fi
 pid="/tmp/picay.$(echo $@ | md5sum | cut -b-8).pid"
 
 if ln -s "pid=$$" $pid 2>/dev/null; then
-    trap "rm $pid" 0 1 2 3 15
+    tmp=$(mktemp)
+    trap "rm $pid $tmp" 0 1 2 3 15
 else
     echo "Lock file $pid exists, exit"
     exit
@@ -37,18 +38,17 @@ BGreen='\033[1;32m'
 ColorOff='\033[0m'
 
 ### Defaults
-HOST=mqtt.mydevices.com
-PORT=1883
 VERBOSE=
 
 . $conf
 
-[ "$VERBOSE" ] && d=-d
-
 ### Read defined metrics and build data to send
 for file in ${0%/*}/metrics/*.sh; do
+
     channel=$(basename $file | sed 's/\.sh//g')
+
     [ -f $(dirname $file)/$channel.disabled ] && continue
+
     if [ "$include" ]; then
         echo $include | grep -q "$channel,"
         [ $? -eq 0 ] || continue
@@ -60,18 +60,19 @@ for file in ${0%/*}/metrics/*.sh; do
     topic=v1/$USERNAME/things/$CLIENTID/data/$channel
     data="$(. $file)"
 
-    printf "${BBlue}%s/%s${ColorOff}\n%s ..." $topic $channel $data
-    [ "$d" ] && printf "\n"
+    printf "${BBlue}PUB %s/%s${ColorOff}\n%s ...\n" $topic $channel $data
 
-    mosquitto_pub $d -i $CLIENTID -h $HOST -p $PORT -u $USERNAME -P $PASSWORD -t $topic -m "$data" -q 1
+    mosquitto_pub -d -i $CLIENTID -h $HOST -p $PORT -u $USERNAME -P $PASSWORD -t $topic -m "$data" -q 1 &>$tmp
     rc=$?
 
-    [ "$d" ] || s="\x8\x8\x8- "
-
     if [ $rc -eq 0 ]; then
-        printf "$s${BGreen}ok${ColorOff}\n"
+        printf "${BGreen}ok\n"
+        [ "$VERBOSE" ] && cat $tmp
     else
-        printf "$sERROR ${BRed}%d{ColorOff}\n" $rc
+        printf "${BRed}"
+        cat $tmp
     fi
+
+    printf "${ColorOff}"
 
 done

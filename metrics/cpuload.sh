@@ -5,4 +5,4 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-awk '{print $1}' /proc/loadavg
+publish cpuload $(awk '{print $1}' /proc/loadavg)

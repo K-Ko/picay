@@ -5,4 +5,4 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-free | awk '/-\/+/{print (1-$4/($3+$4))*100}'
+publish memory $(free | awk '/-\/+/{print (1-$4/($3+$4))*100}')

@@ -9,11 +9,10 @@
 ###
 
 ###
-### Example to get current CPU frequency
+### Example to send current CPU frequency
 ###
-### Just return your metrics in format
-### <value>[,type,unit]
+### publish <channel> <value>
 ###
-### Channel name is build from file name: frequency.sh => frequency
+### See cayenne.sh for special publishing functions
 ###
-#awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+#publish frequency $(awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)

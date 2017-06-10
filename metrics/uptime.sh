@@ -5,4 +5,4 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-awk '{print  $1/60/60/24}' /proc/uptime
+publish uptime $(awk '{print  $1/60/60/24}' /proc/uptime)

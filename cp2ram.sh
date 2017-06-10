@@ -12,12 +12,15 @@ echo "Put this to your crontab:"
 echo
 echo "@reboot $pwd/$(basename $0) $tmp &>/dev/null"
 echo
+
+pwd=$(basename $pwd)
+
 echo "# Send all metrics"
-echo "*    *  *  *  *  bash $tmp/picay/picay.sh &>/dev/null"
+echo "*    *  *  *  *  bash $tmp/$pwd/picay.sh &>/dev/null"
 echo
 echo "# Send all except disk usage and temperature"
-echo "#*/2  *  *  *  *  bash $tmp/picay/picay.sh -disk,temperature &>/dev/null"
+echo "#*/2  *  *  *  *  bash $tmp/$pwd/picay.sh -disk,temperature &>/dev/null"
 echo
 echo "# Send only disk usage and temperature"
-echo "#*/5  *  *  *  *  bash $tmp/picay/picay.sh disk,temperature &>/dev/null"
+echo "#*/5  *  *  *  *  bash $tmp/$pwd/picay.sh disk,temperature &>/dev/null"
 echo

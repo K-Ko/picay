@@ -38,12 +38,15 @@ VERBOSE=
 . $conf
 . $pwd/cayenne.sh
 
-### Read defined metrics and build data to send
+### Read metrics scripts
 for script in $pwd/metrics/*.sh; do
 
     channel=$(basename $script | sed 's/\.sh//g')
 
-    [ -f $(dirname $script)/$channel.disabled ] && continue
+    if [ -f $(dirname $script)/$channel.disabled ]; then
+        echo -e "${BGreen}Skip $channel, disabled"
+        continue
+    fi
 
     if [ "$include" ]; then
         echo $include | grep -q "$channel,"

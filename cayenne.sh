@@ -39,20 +39,28 @@ ColorOff='\033[0m'
 
 ### --------------------------------------------------------------------------
 ### Send data to Cayenne.
+### $1 - channel
+### $2 - value
+### $3 - data type ($TYPE_..., optional)
+### $4 - data unit ($UNIT_..., optional)
 ### --------------------------------------------------------------------------
 function publish () {
     local channel=$1
     local data=$2
-    local dataType=$3
-    local dataUnit=$4
+    local type=$3
+    local unit=$4
+
+    ### Skip empty data
+    [ "$data" ] || return
 
     topic="v1/$USERNAME/things/$CLIENTID/data/$channel"
 
-    [ "$dataType" ] && data="$dataType,$dataUnit=$data"
-
-    echo -ne "${BBlue}PUB $topic${ColorOff}\n$data ... "
+    ### Reformat if a data type was given
+    [ "$type" ] && data="$type,$unit=$data"
 
     echo "Broker $HOST:$PORT" >$tmp
+
+    echo -ne "${BBlue}PUB $topic${ColorOff}\n$data ... "
 
     mosquitto_pub -d -q 1 -i $CLIENTID -h $HOST -p $PORT \
                   -u $USERNAME -P $PASSWORD -t $topic -m "$data" &>>$tmp
@@ -70,11 +78,13 @@ function publish () {
 #      4: MQTT_CONNECT_BAD_CREDENTIALS - the username/password were rejected
 #      5: MQTT_CONNECT_UNAUTHORIZED - the client was not authorized to connect
 
+    echo -en "\b\b\b\b"
+
     if [ $rc -eq 0 ]; then
-        echo -e "\b\b\b\b${BGreen}ok  "
+        echo -e "${BGreen}- ok"
         [ "$VERBOSE" ] && cat $tmp 2>/dev/null
     else
-        echo -e "\b\b\b\b${BRed}fail ($rc)"
+        echo -e "${BRed}- fail ($rc)"
         cat $tmp 2>/dev/null
     fi
 

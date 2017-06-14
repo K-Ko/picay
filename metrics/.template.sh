@@ -11,7 +11,9 @@
 ###
 ### Example to send current CPU frequency
 ###
-### publish <channel> <value>
+### Generic publishing:
+###
+###     publish <channel> <value>
 ###
 ### See cayenne.sh for special publishing functions
 ###

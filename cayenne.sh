@@ -50,7 +50,7 @@ function publish () {
     local type=$3
     local unit=$4
 
-    ### Skip empty data
+    ### Silently skip empty data
     [ "$data" ] || return
 
     topic="v1/$USERNAME/things/$CLIENTID/data/$channel"
@@ -58,11 +58,11 @@ function publish () {
     ### Reformat if a data type was given
     [ "$type" ] && data="$type,$unit=$data"
 
-    echo "Broker $HOST:$PORT" >$tmp
-
     echo -ne "${BBlue}PUB $topic${ColorOff}\n$data ... "
 
-    mosquitto_pub -d -q 1 -i $CLIENTID -h $HOST -p $PORT \
+    echo "Broker $HOST:$PORT" >$tmp
+
+    mosquitto_pub -d -q ${QOS:-1} -i $CLIENTID -h $HOST -p $PORT \
                   -u $USERNAME -P $PASSWORD -t $topic -m "$data" &>>$tmp
 
     rc=$?

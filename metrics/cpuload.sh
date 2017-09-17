@@ -5,4 +5,7 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-publish cpuload $(awk '{print $1}' /proc/loadavg)
+### Channel name will be build from file name (without .sh)
+### Return only the channel value
+###
+awk '{print $1}' /proc/loadavg

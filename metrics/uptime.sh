@@ -5,4 +5,7 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-publish uptime $(awk '{print  $1/60/60/24}' /proc/uptime)
+### Channel name will be build from file name (without .sh)
+### Return only the channel value
+###
+awk '{print  $1/60/60/24}' /proc/uptime

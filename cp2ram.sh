@@ -5,6 +5,9 @@
 pwd=$(readlink -f $(dirname $0))
 tmp=${1:-/tmp}
 
+# Remove old data
+rm -rf $tmp/$(basename $pwd) &>/dev/null
+
 rsync -a "$pwd" "$tmp" --exclude .git --exclude docs
 
 echo

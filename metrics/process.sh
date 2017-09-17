@@ -5,4 +5,7 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-publish process $(awk '{gsub("[0-9]+/", ""); print $4}' /proc/loadavg)
+### Channel name will be build from file name (without .sh)
+### Return only the channel value
+###
+awk '{gsub("[0-9]+/", ""); print $4}' /proc/loadavg

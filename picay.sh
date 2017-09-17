@@ -7,6 +7,13 @@
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
 
+### --------------------------------------------------------------------------
+BBlue='\033[1;34m'
+BRed='\033[1;31m'
+BGreen='\033[1;32m'
+ColorOff='\033[0m'
+
+### --------------------------------------------------------------------------
 pwd=${0%/*}
 conf=$pwd/picay.conf
 
@@ -45,14 +52,13 @@ VERBOSE=
 [ -z "$USERNAME" ] && echo 'Missing unser name!' && exit 1
 [ -z "$PASSWORD" ] && echo 'Missing password!'   && exit 1
 
-. $pwd/cayenne.sh
+. $pwd/datatypes.sh
 
 [ "$VERBOSE" ] || echo -e "${BGreen}Broker $HOST:$PORT${ColorOff}\n"
 
 ### Read metrics scripts
 for script in $pwd/metrics/*.sh; do
-
-    channel=$(basename $script | sed 's/\.sh//g')
+    channel=$(basename $script | sed 's/\.sh$//')
 
     if [ -f $(dirname $script)/$channel.disabled ]; then
         echo -e "${BGreen}Skip $channel, disabled"
@@ -67,7 +73,42 @@ for script in $pwd/metrics/*.sh; do
         [ $? -eq 0 ] && continue
     fi
 
-    ### Run script
-    . $script
+    ### Publish data
+    data=$(. $script)
 
+    ### Silently skip empty data
+    [ "$data" ] || continue
+
+    topic="v1/$USERNAME/things/$CLIENTID/data/$channel"
+
+    echo -ne "${BBlue}PUB $topic${ColorOff}\n$data ... "
+
+    echo "Broker $HOST:$PORT" >$tmp
+
+    mosquitto_pub -d -q ${QOS:-1} -i $CLIENTID -h $HOST -p $PORT \
+                  -u $USERNAME -P $PASSWORD -t $topic -m "$data" &>>$tmp
+
+    rc=$?
+    # -4: MQTT_CONNECTION_TIMEOUT - the server didn't respond within the keepalive time
+    # -3: MQTT_CONNECTION_LOST - the network connection was broken
+    # -2: MQTT_CONNECT_FAILED - the network connection failed
+    # -1: MQTT_DISCONNECTED - the client is disconnected cleanly
+    #  0: MQTT_CONNECTED - the cient is connected
+    #  1: MQTT_CONNECT_BAD_PROTOCOL - the server doesn't support the requested version of MQTT
+    #  2: MQTT_CONNECT_BAD_CLIENT_ID - the server rejected the client identifier
+    #  3: MQTT_CONNECT_UNAVAILABLE - the server was unable to accept the connection
+    #  4: MQTT_CONNECT_BAD_CREDENTIALS - the username/password were rejected
+    #  5: MQTT_CONNECT_UNAUTHORIZED - the client was not authorized to connect
+
+    echo -en "\b\b\b\b"
+
+    if [ $rc -eq 0 ]; then
+        echo -e "${BGreen}- ok"
+        [ "$VERBOSE" ] && cat $tmp 2>/dev/null
+    else
+        echo -e "${BRed}- fail ($rc)"
+        cat $tmp 2>/dev/null
+    fi
+
+    echo -e "${ColorOff}"
 done

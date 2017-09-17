@@ -7,14 +7,9 @@
 ### @copyright  (c) 2016 Knut Kohl
 ### @licence    MIT License - http://opensource.org/licenses/MIT
 ###
-
+### Channel name will be build from file name (without .sh)
+### Return only the channel value
 ###
 ### Example to send current CPU frequency
 ###
-### Generic publishing:
-###
-###     publish <channel> <value>
-###
-### See cayenne.sh for special publishing functions
-###
-#publish frequency $(awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)
+#awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq

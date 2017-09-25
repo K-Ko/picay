@@ -81,13 +81,12 @@ for script in $pwd/metrics/*.sh; do
 
     topic="v1/$USERNAME/things/$CLIENTID/data/$channel"
 
-    echo -ne "${BBlue}PUB $topic${ColorOff}\n$data ... "
+    echo -en "${BBlue}PUB $topic${ColorOff}\n$data ... "
 
     echo "Broker $HOST:$PORT" >$tmp
 
-    mosquitto_pub -d -q ${QOS:-1} -i $CLIENTID -h $HOST -p $PORT \
+    mosquitto_pub -d -q ${QOS:-1} -i $CLIENTID -h $HOST -p $PORT -r \
                   -u $USERNAME -P $PASSWORD -t $topic -m "$data" &>>$tmp
-
     rc=$?
     # -4: MQTT_CONNECTION_TIMEOUT - the server didn't respond within the keepalive time
     # -3: MQTT_CONNECTION_LOST - the network connection was broken
@@ -110,5 +109,5 @@ for script in $pwd/metrics/*.sh; do
         cat $tmp 2>/dev/null
     fi
 
-    echo -e "${ColorOff}"
+    echo -en "${ColorOff}"
 done

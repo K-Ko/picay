@@ -8,4 +8,4 @@
 ### Channel name will be build from file name (without .sh)
 ### Return only the channel value
 ###
-awk '{gsub("[0-9]+/", ""); print $4}' /proc/loadavg
+ANALOG_SENSOR_ANALOG $(awk '{gsub("[0-9]+/", ""); print $4}' /proc/loadavg)

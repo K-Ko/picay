@@ -12,4 +12,4 @@
 ###
 ### Example to send current CPU frequency
 ###
-#awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+#ANALOG_SENSOR_ANALOG $(awk '{print $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)

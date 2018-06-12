@@ -8,4 +8,4 @@
 ### Channel name will be build from file name (without .sh)
 ### Return only the channel value
 ###
-MEMORY_PERCENT $(free | awk '/^Mem/{print (1-$4/($3+$4))*100}')
+ANALOG_SENSOR_ANALOG $(free | awk '/^Mem/{print (1-$4/($3+$4))*100}')

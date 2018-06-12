@@ -8,4 +8,4 @@
 ### Channel name will be build from file name (without .sh)
 ### Return only the channel value
 ###
-awk '{print $1}' /proc/loadavg
+ANALOG_SENSOR_ANALOG $(awk '{print $1}' /proc/loadavg)

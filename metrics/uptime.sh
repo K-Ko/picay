@@ -8,4 +8,4 @@
 ### Channel name will be build from file name (without .sh)
 ### Return only the channel value
 ###
-awk '{print  $1/60/60/24}' /proc/uptime
+ANALOG_SENSOR_ANALOG $(awk '{print  $1/60/60/24}' /proc/uptime)

@@ -8,4 +8,4 @@
 ### Channel name will be build from file name (without .sh)
 ### Return only the channel value
 ###
-CPU_PERCENT $(vmstat | awk '/^[^a-z]+$/{print $13+$14}')
+ANALOG_SENSOR_ANALOG $(vmstat | awk '/^[^a-z]+$/{print $13+$14}')

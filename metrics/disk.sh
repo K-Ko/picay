@@ -8,4 +8,4 @@
 ### Channel name will be build from file name (without .sh)
 ### Return only the channel value
 ###
-df | awk '/\/$/{print $3/$2*100}'
+ANALOG_SENSOR_ANALOG $(df | awk '/\/$/{print $3/$2*100}')
